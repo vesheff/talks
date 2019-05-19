@@ -1,12 +1,11 @@
-import { RolesGuard } from './../common/guards/roles/roles.guard';
 import { UserLoginDTO } from '../models/user/user-login.dto';
-import { Roles } from './../common';
 import { UserRegisterDTO } from '../models/user/user-register.dto';
 import { UsersService } from '../common/core/users.service';
 import { AuthService } from './auth.service';
-import { Get, Controller, UseGuards, Post, Body, ValidationPipe, BadRequestException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Post, Body, ValidationPipe, BadRequestException } from '@nestjs/common';
+import { ApiResponse, ApiUseTags } from '@nestjs/swagger';
 
+@ApiUseTags('Auth')
 @Controller('auth')
 export class AuthController {
 
@@ -15,14 +14,9 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) { }
 
-  @Get()
-  @Roles('admin')
-  @UseGuards(AuthGuard(), RolesGuard)
-  root(): string {
-    return 'root';
-  }
-
   @Post('login')
+  @ApiResponse({ status: 201, description: 'The user has been successfully logged in.'})
+  @ApiResponse({ status: 400, description: 'Bad credentials'})
   async sign(@Body(new ValidationPipe({
     transform: true,
     whitelist: true,
@@ -37,18 +31,20 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiResponse({ status: 201, description: 'The user has been successfully registered.'})
+  @ApiResponse({ status: 400, description: 'Bad credentials'})
   async register(
     @Body(new ValidationPipe({
       transform: true,
       whitelist: true,
     }))
-    user: UserRegisterDTO
+    user: UserRegisterDTO,
   ): Promise<string> {
 
     return (await this.usersService.registerUser(user))
       .fold(
         err => err,
-        msg => msg
+        msg => msg,
       );
   }
 }
