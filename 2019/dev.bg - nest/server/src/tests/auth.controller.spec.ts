@@ -9,13 +9,16 @@ import { some } from 'fp-ts/lib/Option';
 import { UserRegisterDTO } from '../models/user/user-register.dto';
 import { right } from 'fp-ts/lib/Either';
 
-jest.mock('../auth/auth.service');
-jest.mock('../common/core/users.service');
-
 describe('AuthController', () => {
-  let authService: AuthService;
+  const authService = jest.fn(() => ({
+    signIn: jest.fn(),
+  }))();
+
+  const usersService = jest.fn(() => ({
+    registerUser: jest.fn(),
+  }))();
+
   let authCtrl: AuthController;
-  let usersService: UsersService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -25,14 +28,18 @@ describe('AuthController', () => {
         })],
       controllers: [AuthController],
       providers: [
-        UsersService,
-        AuthService
+        {
+          provide: UsersService,
+          useValue: usersService,
+        },
+        {
+          provide: AuthService,
+          useValue: authService,
+        },
       ],
     }).compile();
 
     authCtrl = module.get<AuthController>(AuthController);
-    authService = module.get<AuthService>(AuthService);
-    usersService = module.get<UsersService>(UsersService);
   });
 
   it('should call AuthService signIn method', async () => {
