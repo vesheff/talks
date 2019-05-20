@@ -10,5 +10,4 @@ export class ChangedNameOfUsersTable1544604503640 implements MigrationInterface 
     public async down(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query('DROP TABLE `users`');
     }
-
 }

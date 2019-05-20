@@ -12,9 +12,9 @@ export interface EnvConfig {
 export class ConfigService {
   private readonly envConfig: EnvConfig;
 
-  constructor(filePath: string = null) {
+  constructor(filePath: string | undefined) {
     let config;
-    if (filePath) {
+    if (filePath !== undefined) {
       config = dotenv.parse(fs.readFileSync(filePath));
     } else {
       config = dotenv.config().parsed;
