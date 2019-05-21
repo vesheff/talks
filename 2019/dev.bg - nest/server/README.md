@@ -24,9 +24,13 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+## Important 
+
+```.env``` file is uploaded for demo purposes but you should never do that in production applications. Add it in ```.gitignore``` file
+
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest REST Starter on Steroids](https://github.com/vesheff/talks/tree/master/2019/dev.bg%20-%20nest/server) framework TypeScript starter repository with JWT, Swagger, Wallaby, TypeORM, etc.
 
 ## Installation
 
@@ -43,22 +47,17 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# incremental rebuild (webpack)
-$ npm run webpack
-$ npm run start:hmr
-
 # production mode
 $ npm run start:prod
 ```
 
 ## Test
 
+You could use [wallaby.js](https://wallabyjs.com/) and run your tests in an interactive mode as well as in the browser with Wallaby app 
+
 ```bash
 # unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
