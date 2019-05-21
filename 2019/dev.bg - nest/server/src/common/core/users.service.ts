@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { User } from './../../data/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { JwtPayload } from './../../interfaces/jwt-payload';
 import { Option, some, none } from 'fp-ts/lib/Option';
 import { Either, left, right } from 'fp-ts/lib/Either';
@@ -20,7 +20,7 @@ export class UsersService {
 
   async isExistingUser(email: string): Promise<boolean> {
     const userFound: User | undefined = await this.usersRepository.findOne({ where: { email } });
-
+    
     return userFound !== undefined ? true : false;
   }
 
