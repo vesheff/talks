@@ -42,9 +42,10 @@ export class UsersController {
   }
 
   @Get(':email')
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), AdminGuard)
   @ApiResponse({ status: 200, description: 'You successfully fetched user profile.' })
   @ApiResponse({ status: 401, description: 'You are not authorized!' })
+  @ApiResponse({ status: 403, description: 'You are not authorized!' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiImplicitParam({name: 'email'})
   async profile(@Param('email') email): Promise<GetUserDTO | string> {
