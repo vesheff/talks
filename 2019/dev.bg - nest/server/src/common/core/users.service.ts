@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { User } from './../../data/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { JwtPayload } from './../../interfaces/jwt-payload';
 import { Option, some, none } from 'fp-ts/lib/Option';
 import { Either, left, right } from 'fp-ts/lib/Either';
@@ -19,15 +19,15 @@ export class UsersService {
   ) { }
 
   async isExistingUser(email: string): Promise<boolean> {
-    const userFound: User = await this.usersRepository.findOne({ where: { email } });
-
-    return userFound ? true : false;
+    const userFound: User | undefined = await this.usersRepository.findOne({ where: { email } });
+    
+    return userFound !== undefined ? true : false;
   }
 
   async registerUser(userDTO: UserRegisterDTO): Promise<Either<string, string>> {
-    const userFound: User = await this.usersRepository.findOne({ where: { email: userDTO.email } });
+    const userFound: User | undefined = await this.usersRepository.findOne({ where: { email: userDTO.email } });
 
-    if (userFound) {
+    if (userFound !== undefined) {
       return left('User already registered!');
     }
 
@@ -47,10 +47,10 @@ export class UsersService {
   }
 
   async validateUser(payload: JwtPayload): Promise<Option<GetUserDTO>> {
-    const userFound: User = await this.usersRepository.findOne({ where: { email: payload.email } });
+    const userFound: User | undefined = await this.usersRepository.findOne({ where: { email: payload.email } });
     const userDTO: GetUserDTO = new GetUserDTO();
 
-    if (userFound) {
+    if (userFound !== undefined) {
       userDTO.email = userFound.email;
       userDTO.isAdmin = userFound.isAdmin;
       return some(userDTO);
@@ -60,9 +60,10 @@ export class UsersService {
   }
 
   async signIn(user: UserLoginDTO): Promise<Option<GetUserDTO>> {
-    const userFound: User = await this.usersRepository.findOne({ select: ['email', 'isAdmin', 'password'], where: { email: user.email } });
+    const userFound: User | undefined = await this.usersRepository
+      .findOne({ select: ['email', 'isAdmin', 'password'], where: { email: user.email } });
 
-    if (userFound) {
+    if (userFound !== undefined) {
       const result: boolean = await bcrypt.compare(user.password, userFound.password);
       if (result) {
         const userToReturn: GetUserDTO = new GetUserDTO();
@@ -94,13 +95,17 @@ export class UsersService {
 
   async profile(email: string): Promise<Either<string, GetUserDTO>> {
     try {
-      const user: User = (await this.usersRepository.findOne({where: {email: email}}));
+      const user: User | undefined = (await this.usersRepository.findOne({ where: { email } }));
       const userToReturn: GetUserDTO = new GetUserDTO();
 
-      userToReturn.email = user.email;
-      userToReturn.isAdmin = user.isAdmin;
+      if (user !== undefined) {
+        userToReturn.email = user.email;
+        userToReturn.isAdmin = user.isAdmin;
 
-      return right(userToReturn);
+        return right(userToReturn);
+      }
+
+      return left('No such user');
 
     } catch (error) {
       return left(error.message);

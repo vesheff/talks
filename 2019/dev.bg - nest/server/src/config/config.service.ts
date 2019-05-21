@@ -1,4 +1,4 @@
-import * as Joi from 'joi';
+import * as Joi from '@hapi/joi';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
@@ -12,9 +12,9 @@ export interface EnvConfig {
 export class ConfigService {
   private readonly envConfig: EnvConfig;
 
-  constructor(filePath: string = null) {
+  constructor(filePath: string | undefined = undefined) {
     let config;
-    if (filePath) {
+    if (filePath !== undefined) {
       config = dotenv.parse(fs.readFileSync(filePath));
     } else {
       config = dotenv.config().parsed;

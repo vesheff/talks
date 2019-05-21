@@ -12,7 +12,8 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "strictNullChecks": true
   },
   "include": [
     "src/**/*"
