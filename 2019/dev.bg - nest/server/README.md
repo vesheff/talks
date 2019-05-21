@@ -24,6 +24,10 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+## Important 
+
+```.env``` file is uploaded for demo purposes but you should never do that in production applications. Add it in ```.gitignore``` file
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
@@ -52,6 +56,8 @@ $ npm run start:prod
 ```
 
 ## Test
+
+You could use [wallaby.js](https://wallabyjs.com/) and run your tests in an interactive mode as well as in the browser with Wallaby app 
 
 ```bash
 # unit tests
