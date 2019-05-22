@@ -32,6 +32,24 @@
 
 [Nest REST Starter on Steroids](https://github.com/vesheff/talks/tree/master/2019/dev.bg%20-%20nest/server) framework TypeScript starter repository with JWT, Swagger, Wallaby, TypeORM, etc.
 
+This branch uses [Fastify](https://www.fastify.io/) instead of [Express](https://expressjs.com/).
+
+  ```ts
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+  );
+  ```
+
+It uses ```strictNullChecks``` and Functional Programming with Monads to escape the null references [https://www.lucidchart.com/techblog/2015/08/31/the-worst-mistake-of-computer-science/](https://www.lucidchart.com/techblog/2015/08/31/the-worst-mistake-of-computer-science/)
+
+
+It uses Swagger to test your api on [http://localhost:3000/api](http://localhost:3000/api).
+
+## Prerequisites
+
+The setup uses MySQL database. Check out the ```ConfigService``` as well as ```.env``` file for the full setup.
+
 ## Installation
 
 ```bash
@@ -39,6 +57,8 @@ $ npm install
 ```
 
 ## Running the app
+
+Listening on [http://localhost:3000](http://localhost:3000).
 
 ```bash
 # development
