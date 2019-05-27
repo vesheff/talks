@@ -30,7 +30,7 @@
 
 ## Description
 
-[Nest REST Starter on Steroids](https://github.com/vesheff/talks/tree/master/2019/dev.bg%20-%20nest/server) framework TypeScript starter repository with JWT, Swagger, Wallaby, TypeORM, etc.
+[Nest REST Starter on Steroids](https://github.com/vesheff/talks/tree/master/2019/dev.bg%20-%20nest/server) with fp-ts, JWT, Swagger, Wallaby, TypeORM, etc.
 
 This branch uses [Fastify](https://www.fastify.io/) instead of [Express](https://expressjs.com/).
 
