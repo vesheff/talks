@@ -30,7 +30,7 @@
 
 ## Description
 
-[Nest REST Starter on Steroids](https://github.com/vesheff/talks/tree/master/2019/dev.bg%20-%20nest/server) with JWT, Swagger, Wallaby, TypeORM, etc.
+[Nest REST Starter on Steroids](https://github.com/vesheff/talks/tree/master/2019/dev.bg%20-%20nest/server) with [fp-ts](https://gcanti.github.io/fp-ts/) JWT, [Swagger](https://swagger.io/), [Wallaby](https://wallabyjs.com/), [TypeORM](https://typeorm.io/), etc.
 
 It uses ```strictNullChecks``` and Functional Programming with Monads to escape the null references [https://www.lucidchart.com/techblog/2015/08/31/the-worst-mistake-of-computer-science/](https://www.lucidchart.com/techblog/2015/08/31/the-worst-mistake-of-computer-science/)
 
