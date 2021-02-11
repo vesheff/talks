@@ -37,11 +37,37 @@ It uses ```strictNullChecks``` and Functional Programming with Monads to escape 
 
 It uses Swagger to test your api on [http://localhost:3000/api](http://localhost:3000/api).
 
+## Resources (**Highly recommend**)
+1. Basics
+  - [Monads in pictures](https://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html)
+  - [Functional Light JS](https://github.com/getify/Functional-Light-JS)
+  - [Fun Fun Function](https://www.youtube.com/watch?v=BMUiFMZr7vk&list=PL0zVEGEvSaeEd9hlmCXrk5yUyqUag-n84)
+
+2. Intermediate/Advanced (intermediate here is so vague)
+  - [Mostly adequate guide to FP](https://mostly-adequate.gitbook.io/mostly-adequate-guide/)
+  - [Composable functional JavaScript](https://egghead.io/courses/professor-frisby-introduces-composable-functional-javascript)
+
+3. Truly Advanced
+  - [Learn You Haskell](http://learnyouahaskell.com/)
+
+
 ## Prerequisites
 
-The setup uses MySQL database. Check out the ```ConfigService``` as well as ```.env``` file for the full setup.
+- The setup uses MySQL database. Check out the ```ConfigService``` as well as ```.env``` file for the full setup.
+
+- There is an `ormconfig.js` file also. It is used for DB migrations. 
+
+- You have to change DB password in both `.env` and `ormconfig.js` files. 
+
+- Create a schema in mysql and use the same name in both files. The default name is `mydb`.
 
 ## Installation
+
+- Run the migration to create the users table
+
+```bash
+npm run migration:run
+```
 
 ```bash
 $ npm install
@@ -61,6 +87,10 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## Scripts
+
+Check out the other scripts in `package.json`. There are some useful ones.
 
 ## Test
 
