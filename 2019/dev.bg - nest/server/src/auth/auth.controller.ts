@@ -15,24 +15,22 @@ export class AuthController {
   ) { }
 
   @Post('login')
-  @ApiResponse({ status: 201, description: 'The user has been successfully logged in.'})
-  @ApiResponse({ status: 400, description: 'Bad credentials'})
+  @ApiResponse({ status: 201, description: 'The user has been successfully logged in.' })
+  @ApiResponse({ status: 400, description: 'Bad credentials' })
   async sign(@Body(new ValidationPipe({
     transform: true,
     whitelist: true,
   })) user: UserLoginDTO): Promise<string> {
-    const token = await this.authService.signIn(user);
-
-    if (token.isNone()) {
-      throw new BadRequestException('Wrong credentials!');
-    }
-
-    return token.getOrElse('Error');
+    return (await this.authService.signIn(user))
+      .foldL(
+        () => { throw new BadRequestException('Wrong credentials!') },
+        token => token
+      );
   }
 
   @Post('register')
-  @ApiResponse({ status: 201, description: 'The user has been successfully registered.'})
-  @ApiResponse({ status: 400, description: 'Bad credentials'})
+  @ApiResponse({ status: 201, description: 'The user has been successfully registered.' })
+  @ApiResponse({ status: 400, description: 'Bad credentials' })
   async register(
     @Body(new ValidationPipe({
       transform: true,

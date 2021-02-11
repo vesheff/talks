@@ -16,7 +16,6 @@ export class UsersController {
   ) { }
 
   @Get()
-  @UseGuards(AuthGuard(), AdminGuard)
   @ApiResponse({ status: 200, description: 'You successfully fetched user profiles.' })
   @ApiResponse({ status: 401, description: 'You are not authorized!' })
   async all(): Promise<GetUserDTO[] | string> {
