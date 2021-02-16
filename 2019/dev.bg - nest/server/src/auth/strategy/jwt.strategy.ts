@@ -6,6 +6,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { GetUserDTO } from 'src/models/user/get-user.dto';
 
+import { pipe } from 'fp-ts/lib/function';
+import * as O from 'fp-ts/lib/Option';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -19,6 +21,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: JwtPayload): Promise<GetUserDTO | undefined> {
     const user = await this.authService.validateUser(payload);
-    return user.fold(undefined, userFound => userFound);
+    return pipe(
+      user,
+      O.fold(() => undefined, userFound => userFound)
+    )
   }
 }

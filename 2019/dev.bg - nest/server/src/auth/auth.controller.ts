@@ -2,10 +2,13 @@ import { UserLoginDTO } from '../models/user/user-login.dto';
 import { UserRegisterDTO } from '../models/user/user-register.dto';
 import { UsersService } from '../common/core/users.service';
 import { AuthService } from './auth.service';
-import { Controller, Post, Body, ValidationPipe, BadRequestException } from '@nestjs/common';
-import { ApiResponse, ApiUseTags } from '@nestjs/swagger';
+import { Controller, Post, Body, ValidationPipe } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiUseTags('Auth')
+import * as E from 'fp-ts/lib/Either';
+import { pipe } from 'fp-ts/lib/function';
+
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
 
@@ -21,11 +24,7 @@ export class AuthController {
     transform: true,
     whitelist: true,
   })) user: UserLoginDTO): Promise<string> {
-    return (await this.authService.signIn(user))
-      .foldL(
-        () => { throw new BadRequestException('Wrong credentials!') },
-        token => token
-      );
+    return (await this.authService.signIn(user));
   }
 
   @Post('register')
@@ -39,10 +38,14 @@ export class AuthController {
     user: UserRegisterDTO,
   ): Promise<string> {
 
-    return (await this.usersService.registerUser(user))
-      .fold(
+    const userRegister = await this.usersService.registerUser(user);
+
+    return pipe(
+      userRegister,
+      E.fold(
         err => err,
         msg => msg,
-      );
+      )
+    );
   }
 }

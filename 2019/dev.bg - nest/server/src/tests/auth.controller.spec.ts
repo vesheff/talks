@@ -5,8 +5,8 @@ import { Test } from '@nestjs/testing';
 import { AuthService } from '../auth/auth.service';
 import { PassportModule } from '@nestjs/passport';
 
-import { some } from 'fp-ts/lib/Option';
 import { UserRegisterDTO } from '../models/user/user-register.dto';
+import { some } from 'fp-ts/lib/Option';
 import { right } from 'fp-ts/lib/Either';
 
 describe('AuthController', () => {

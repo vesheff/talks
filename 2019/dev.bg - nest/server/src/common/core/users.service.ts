@@ -10,6 +10,10 @@ import * as bcrypt from 'bcryptjs';
 import { JwtPayload } from './../../interfaces/jwt-payload';
 import { Option, some, none } from 'fp-ts/lib/Option';
 import { Either, left, right } from 'fp-ts/lib/Either';
+import * as TE from 'fp-ts/lib/TaskEither'
+import * as T from 'fp-ts/lib/Task'
+import * as E from 'fp-ts/lib/Either'
+import { pipe } from 'fp-ts/lib/function';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +24,7 @@ export class UsersService {
 
   async isExistingUser(email: string): Promise<boolean> {
     const userFound: User | undefined = await this.usersRepository.findOne({ where: { email } });
-    
+
     return userFound !== undefined ? true : false;
   }
 
@@ -49,7 +53,6 @@ export class UsersService {
   async validateUser(payload: JwtPayload): Promise<Option<GetUserDTO>> {
     const userFound: User | undefined = await this.usersRepository.findOne({ where: { email: payload.email } });
     const userDTO: GetUserDTO = new GetUserDTO();
-
     if (userFound !== undefined) {
       userDTO.email = userFound.email;
       userDTO.isAdmin = userFound.isAdmin;
@@ -59,56 +62,76 @@ export class UsersService {
     return none;
   }
 
-  async signIn(user: UserLoginDTO): Promise<Option<GetUserDTO>> {
-    const userFound: User | undefined = await this.usersRepository
-      .findOne({ select: ['email', 'isAdmin', 'password'], where: { email: user.email } });
+  async signIn(user: UserLoginDTO): Promise<string | GetUserDTO> {
 
-    if (userFound !== undefined) {
-      const result: boolean = await bcrypt.compare(user.password, userFound.password);
-      if (result) {
-        const userToReturn: GetUserDTO = new GetUserDTO();
-        userToReturn.email = userFound.email;
-        userToReturn.isAdmin = userFound.isAdmin;
-        return some(userToReturn);
+    const userFound = () => TE.tryCatch(async () => {
+      const a = await this.usersRepository
+        .findOne({ select: ['email', 'isAdmin', 'password'], where: { email: user.email } })
+      if (a) {
+        return a;
+      } else {
+        return 'No such user'
       }
-    }
+    }, e => false);
+    const getUsersTask =
+      pipe(
+        userFound(),
+        TE.chain(a => TE.tryCatch(async () => {
+          if (typeof a === 'string') {
+            return 'No such user';
+          } else {
+            const result = await bcrypt.compare(user.password, a.password);
+            if (result) {
+              const userFound = new GetUserDTO();
+              userFound.email = a.email;
+              userFound.isAdmin = a.isAdmin;
+              return userFound;
+            } else {
+              return 'No such  user';
+            }
+          }
+        }, e => e)),
+        TE.fold<string, GetUserDTO, string | GetUserDTO>((e) => T.of(e), userFound => T.of(userFound)),
+      );
 
-    return none;
+    const res = await getUsersTask();
+    return res;
   }
 
-  async getAll(): Promise<Either<string, GetUserDTO[]>> {
-    try {
-      const users: GetUserDTO[] = (await this.usersRepository.find({})).map((user: User) => {
-        const userDto = new GetUserDTO();
-        userDto.email = user.email;
-        userDto.isAdmin = user.isAdmin;
+  async getAll(): Promise<string | GetUserDTO[]> {
 
-        return userDto;
-      });
+    // const users = new Promise<User[]>((res, rej) => rej());
+    const users = this.usersRepository.find({});
+    const getUsersTask = pipe(
+      TE.tryCatch<string, User[]>(
+        () => users,
+        () => 'Failed to get users',
+      ),
+      TE.map((users) => {
+        return users.map((user: User) => {
+          const userDto = new GetUserDTO();
+          userDto.email = user.email;
+          userDto.isAdmin = user.isAdmin;
+          return userDto;
+        })
+      }),
+      TE.fold<string, GetUserDTO[], string | GetUserDTO[]>(s => T.of(s), r => T.of(r))
+    );
 
-      return right(users);
-
-    } catch (error) {
-      return left(error.message);
-    }
+    const res = getUsersTask();
+    // throw new Error('Failed');
+    return res;
   }
 
   async profile(email: string): Promise<Either<string, GetUserDTO>> {
-    try {
-      const user: User | undefined = (await this.usersRepository.findOne({ where: { email } }));
-      const userToReturn: GetUserDTO = new GetUserDTO();
-
-      if (user !== undefined) {
-        userToReturn.email = user.email;
-        userToReturn.isAdmin = user.isAdmin;
-
-        return right(userToReturn);
-      }
-
-      return left('No such user');
-
-    } catch (error) {
-      return left(error.message);
-    }
+    return pipe(
+      E.fromNullable('No such user')(await this.usersRepository.findOne({ where: { email } })),
+      E.map((user) => {
+        return {
+          email: user.email,
+          isAdmin: user.isAdmin
+        }
+      })
+    )
   }
 }

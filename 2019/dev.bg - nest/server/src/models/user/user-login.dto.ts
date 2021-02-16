@@ -1,13 +1,13 @@
 import { IsString, Matches, IsEmail } from 'class-validator';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserLoginDTO {
 
-  @ApiModelProperty()
+  @ApiProperty()
   @IsEmail()
   email: string;
 
-  @ApiModelProperty()
+  @ApiProperty()
   @IsString()
   @Matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}/)
   password: string;

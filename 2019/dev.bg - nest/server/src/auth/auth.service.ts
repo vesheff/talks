@@ -13,9 +13,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) { }
 
-  public async signIn(user: UserLoginDTO): Promise<Option<string>> {
-    return (await this.usersService.signIn(user))
-      .map(userFound => this.jwtService.sign({ email: userFound.email, isAdmin: userFound.isAdmin }));
+  public async signIn(user: UserLoginDTO): Promise<string> {
+    const userFound = await this.usersService.signIn(user);
+
+    if (typeof userFound === 'string') {
+      return 'No such user';
+    } else {
+      return this.jwtService.sign({ email: userFound.email, isAdmin: userFound.isAdmin });
+    }
   }
 
   async validateUser(payload: JwtPayload): Promise<Option<GetUserDTO>> {
