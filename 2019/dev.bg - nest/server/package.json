@@ -21,7 +21,7 @@
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run"
   },
   "dependencies": {
-    "@hapi/joi": "^15.0.3",
+    "@hapi/joi": "^15.1.1",
     "@nestjs/common": "^6.2.3",
     "@nestjs/core": "^6.2.3",
     "@nestjs/jwt": "^6.1.0",
